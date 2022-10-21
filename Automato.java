@@ -18,11 +18,19 @@ public class Automato
 
     Automato(Vector<Character> alfabeto, Vector<Integer> estadosFinais, Vector<Integer> estados, Dictionary<Par, Integer> trans)
     {
-        this.estadoInicial = 1; /*estado inicial é sempre zero kk*/
+        this.estadoInicial = 1; /*estado inicial é sempre um kk*/
         this.alfabeto = alfabeto;
-        this.estados = estados;
-        this.estadosFinais = estadosFinais; 
-        this.trans = trans; 
+        this.trans = trans;
+        
+        if(estados.contains(1))
+        	this.estados = estados;
+        else
+        	throw new IllegalArgumentException("Um dos estados precisa ser 1!");
+        
+        if(estados.containsAll(estadosFinais))
+        	this.estadosFinais = estadosFinais;
+        else
+        	throw new IllegalArgumentException("Os estados finais precisam fazer parte dos estados!");  
     }
     
     /*Entrada é o estado antes da transição.*/
@@ -41,6 +49,8 @@ public class Automato
     	while(sc.hasNext())
     	{
     		simbolo = sc.next().charAt(0);
+    		if(!this.alfabeto.contains(simbolo))
+    			throw new IllegalArgumentException("O símbolo inserido não pertence ao alfabeto!");
     		lexema.add(simbolo);
     		entrada = new Par(estadoAtual, simbolo);
     		
