@@ -18,8 +18,7 @@ class Estado:
         for i in range(len(self.trans)):
             if(self.trans[i][0] == entrada):
                 check = True
-                return self.trans[i][1]
-                
+                return self.trans[i][1]      
 
         if(check == False):
             print("ERRO: Transição não encontrada no estado Q"+str(self.getIndice())+" para a entrada: "+str(entrada) )
@@ -29,24 +28,24 @@ class Estado:
 
 # =================================================================================================================================== #
 
-alfabeto = {'0','1'}
+def AFD(alfabeto, estados, q0, qf, funcTrans):
+    automato = []
+    
+    for i in range(len(funcTrans)):
+        isFinal = False
+        if(i in qf):
+            isFinal = True
 
-# Definindo AFD. Neste caso, L = número ímpar de 1's
-AFD = []
+        automato.append( Estado(i, isFinal) )
 
-AFD.append( Estado(0,False) )
-AFD.append( Estado(1,True) )
+        for j in range(len(alfabeto)):
+            automato[i].addTrans( alfabeto[j] , funcTrans[i][j] )
 
-AFD[0].addTrans('0',0)
-AFD[0].addTrans('1',1)
-AFD[1].addTrans('0',1)
-AFD[1].addTrans('1',0)
+    return automato
 
-expressao = '000100011000000000000000000000000000000000000000000000000000000111'  ## Expressão de entrada a ser verificada pelo autômato
 
-# =================================================================================================================================== #
 
-def verExpressao(expressao, AFD):
+def verExpressao(expressao, automato):
     estado_atual = 0
 
     # Loop de verificação da expressão dada
@@ -58,14 +57,33 @@ def verExpressao(expressao, AFD):
             print("ERRO: character fora do alfabeto")
             return False
         
-        estado_atual = AFD[estado_atual].getTransPorEntrada(lexema)
+        estado_atual = automato[estado_atual].getTransPorEntrada(lexema)
 
-    if(AFD[estado_atual].isFinal == True):
+    if(automato[estado_atual].isFinal == True):
         print("A palavra " + expressao + " pertence à linguagem.")
     else:
         print("A palavra " + expressao + " NÃO pertence à linguagem.")
 
 # =================================================================================================================================== #
 
-verExpressao(expressao, AFD)
+
+alfabeto = {'p','e','t','c','a'}
+alfabeto = list(alfabeto)
+alfabeto.sort()
+q0 = 0
+qf = {2}
+estados = {0,1}
+
+funcTrans = []
+file = open('tabela_1.txt', 'r')
+linha = file.readline()
+while(len(linha) != 0):
+    linha = linha.split()
+    linha = list(map(int, linha))
+    funcTrans.append( tuple(linha) )
+    linha = file.readline()
+
+automato = AFD(alfabeto, estados, q0, qf, funcTrans)
+expressao = 'petecatecatecateca'
+verExpressao(expressao, automato)
 
